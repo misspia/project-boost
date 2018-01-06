@@ -1,49 +1,82 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Bird : MonoBehaviour {
 
     [SerializeField] float thurstPower = 100f;
     [SerializeField] float mainThrust = 100f;
+    [SerializeField] AudioClip mainEngine;
+    [SerializeField] AudioClip success;
+    [SerializeField] AudioClip death;
+    
+    [SerializeField] ParticleSystem successParticles;
 
     Rigidbody rigidBody;
     AudioSource audioSource;
-	// Use this for initialization
-	void Start () {
+
+    enum State { Alive, Dying, Transcending }
+    State state = State.Alive;
+
+    // Use this for initialization
+    void Start() {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
-	}
-	// Update is called once per frame
-	void Update () {
-        Thrust();
-        Rotate();
-	}
+    }
+    // Update is called once per frame
+    void Update() {
+        if (state == State.Alive)
+        {
+            RespondToThrusInput();
+            RespondToRotate();
+        }
+    }
     void OnCollisionEnter(Collision collision)
     {
-        switch(collision.gameObject.tag)
+        if (state != State.Alive) return;
+        switch (collision.gameObject.tag)
         {
             case "Friendly":
                 print("OK");
                 break;
-            case "Points":
-                print("Earned points");
+            case "Finish":
+                StartSuccessSequence();
                 break;
             default:
-                print("dead");
-                // kill player
+                StartDeathSequence();
                 break;
         }
     }
-    private void Thrust()
+    private void StartSuccessSequence()
+    {
+        state = State.Transcending;
+        audioSource.Stop();
+        audioSource.PlayOneShot(success);
+        successParticles.Play();
+        Invoke("LoadNextLevel", 1f);
+    }
+    private void StartDeathSequence()
+    {
+        state = State.Dying;
+        audioSource.Stop();
+        audioSource.PlayOneShot(death);
+        Invoke("LoadFirstLevel", 2f);
+    }
+    private void LoadNextLevel()
+    {
+        SceneManager.LoadScene(1);
+    }
+    private void LoadFirstLevel()
+    {
+        SceneManager.LoadScene(0);
+    }
+    private void RespondToThrusInput()
     {
         if (Input.GetKey(KeyCode.Space))
         {
             rigidBody.AddRelativeForce(Vector3.up * mainThrust);
             if (!audioSource.isPlaying)
             {
-                audioSource.Play();
+                ApplyThrust();
             }
         }
         else
@@ -51,7 +84,11 @@ public class Bird : MonoBehaviour {
             audioSource.Stop();
         }
     }
-    private void Rotate()
+    private void ApplyThrust()
+    {
+        audioSource.PlayOneShot(mainEngine);
+    }
+    private void RespondToRotate()
     {
         rigidBody.freezeRotation = true; // take manual control of rotation
         
