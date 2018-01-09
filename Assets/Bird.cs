@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Bird : MonoBehaviour {
 
     [SerializeField] float thurstPower = 100f;
     [SerializeField] float mainThrust = 100f;
+    [SerializeField] float levelLoadDelay = 2f;
     [SerializeField] AudioClip mainEngine;
     [SerializeField] AudioClip success;
     [SerializeField] AudioClip death;
@@ -17,6 +19,8 @@ public class Bird : MonoBehaviour {
     enum State { Alive, Dying, Transcending }
     State state = State.Alive;
 
+    bool isCollisionDisabled = false;
+
     // Use this for initialization
     void Start() {
         rigidBody = GetComponent<Rigidbody>();
@@ -26,17 +30,32 @@ public class Bird : MonoBehaviour {
     void Update() {
         if (state == State.Alive)
         {
-            RespondToThrusInput();
+            RespondToThrustInput();
             RespondToRotate();
         }
+        if(Debug.isDebugBuild)
+        {
+            RespondToDebugKeys();
+        }
     }
+
+    private void RespondToDebugKeys()
+    {
+        if(Input.GetKeyDown(KeyCode.L)) {
+            LoadNextLevel();
+        }
+        if(Input.GetKeyDown(KeyCode.C))
+        {
+            isCollisionDisabled = !isCollisionDisabled;
+        }
+    }
+
     void OnCollisionEnter(Collision collision)
     {
-        if (state != State.Alive) return;
+        if (state != State.Alive || isCollisionDisabled) return;
         switch (collision.gameObject.tag)
         {
             case "Friendly":
-                print("OK");
                 break;
             case "Finish":
                 StartSuccessSequence();
@@ -52,14 +71,14 @@ public class Bird : MonoBehaviour {
         audioSource.Stop();
         audioSource.PlayOneShot(success);
         successParticles.Play();
-        Invoke("LoadNextLevel", 1f);
+        Invoke("LoadNextLevel", levelLoadDelay);
     }
     private void StartDeathSequence()
     {
         state = State.Dying;
         audioSource.Stop();
         audioSource.PlayOneShot(death);
-        Invoke("LoadFirstLevel", 2f);
+        Invoke("LoadFirstLevel", levelLoadDelay);
     }
     private void LoadNextLevel()
     {
@@ -69,8 +88,9 @@ public class Bird : MonoBehaviour {
     {
         SceneManager.LoadScene(0);
     }
-    private void RespondToThrusInput()
+    private void RespondToThrustInput()
     {
+        
         if (Input.GetKey(KeyCode.Space))
         {
             rigidBody.AddRelativeForce(Vector3.up * mainThrust);
