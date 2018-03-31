@@ -5,13 +5,16 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class Player : MonoBehaviour {
 
-	// Use this for initialization
+    [Tooltip("In ms^-1")][SerializeField] float xSpeed = 4f;
+
 	void Start () {
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        float horizontalThrow = CrossPlatformInputManager.GetAxis("Horizontal");
+        float xThrow = CrossPlatformInputManager.GetAxis("Horizontal");
+        float xOffsetThisFrame = xThrow * xSpeed * Time.deltaTime;
+        print(xOffsetThisFrame);
 	}
 }
