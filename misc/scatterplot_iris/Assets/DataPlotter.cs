@@ -23,7 +23,7 @@ public class DataPlotter : MonoBehaviour {
     public GameObject PointPrefab;
     public GameObject PointHolderPrefab;
 
-    public float plotScale = 10f;
+    public float plotScale = 10.0f;
 
 	void Start () {
         pointList = CSVReader.Read(inputfile);
@@ -77,7 +77,8 @@ public class DataPlotter : MonoBehaviour {
                 pointList[i][yName] + " " +
                 pointList[i][zName];
             dataPoint.transform.name = dataPointName;
-                
+
+            dataPoint.GetComponent<Renderer>().material.color = new Color(x, y, z, 1.0f);
         }
     }
     private float FindMaxValue(string columnName)
