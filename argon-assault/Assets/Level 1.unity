@@ -162,9 +162,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 119f062a74c091a43aa4b8bc73fb4f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
-  xRange: 5
-  yRange: 3
+  speed: 3
+  xRange: 0.9
+  yRange: 0.9
+  positionPitchFactor: -5
+  controlPitchFactor: -5
+  positionYawFactor: -5
+  controlRollFactor: -30
 --- !u!33 &246781750
 MeshFilter:
   m_ObjectHideFlags: 0
