@@ -7129,11 +7129,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 119f062a74c091a43aa4b8bc73fb4f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
-  xRange: 0.9
-  yRange: 0.9
+  controlSpeed: 3
+  xRange: 1
+  yRange: 1
   positionPitchFactor: -5
-  controlPitchFactor: -5
+  controlPitchFactor: -30
   positionYawFactor: -5
   controlRollFactor: -30
 --- !u!33 &246781750
@@ -7204,6 +7204,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &246781754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 246781747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b972a4908c6254a962dc3166403786, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &406250478
 GameObject:
   m_ObjectHideFlags: 0

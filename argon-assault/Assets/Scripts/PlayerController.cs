@@ -3,39 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
-public class Player : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-
-    [Tooltip("In ms^-1")] [SerializeField] float speed = 3f;
+    [Header("General")]
+    [Tooltip("In ms^-1")] [SerializeField] float controlSpeed = 3f;
     [Tooltip("In m")] [SerializeField] float xRange = 1f;
     [Tooltip("In m")] [SerializeField] float yRange = 1f;
 
+    [Header("Screen-position based")]
     [SerializeField] float positionPitchFactor = -5f;
     [SerializeField] float controlPitchFactor = -30f;
 
+    [Header("Control-throw based")]
     [SerializeField] float positionYawFactor = -5f;
     [SerializeField] float controlRollFactor = -30f;
 
     float xThrow, yThrow;
-    // Use this for initialization
-    void Start()
-    {
+    bool isControlEnabled = true;
 
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        print("Player collided something");
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        print("Player triggered something");
-    }
     // Update is called once per frame
     void Update()
     {
-        ProcessRotation();
-        ProcessTranslation();
-        
+        if (isControlEnabled)
+        {
+            ProcessRotation();
+            ProcessTranslation();
+
+        }
+    }
+    private void OnPlayerDeath() // called by string ref
+    {
+        isControlEnabled = false;
+
     }
     private void ProcessRotation()
     {
@@ -53,8 +52,8 @@ public class Player : MonoBehaviour
         xThrow = CrossPlatformInputManager.GetAxis("Horizontal");
         yThrow = CrossPlatformInputManager.GetAxis("Vertical");
 
-        float xOffset = xThrow * speed * Time.deltaTime;
-        float yOffset = yThrow * speed * Time.deltaTime;
+        float xOffset = xThrow * controlSpeed * Time.deltaTime;
+        float yOffset = yThrow * controlSpeed * Time.deltaTime;
 
         float rawXPos = transform.localPosition.x + xOffset;
         float clampedXPos = Mathf.Clamp(rawXPos, -xRange, xRange);
@@ -64,4 +63,5 @@ public class Player : MonoBehaviour
 
         transform.localPosition = new Vector3(clampedXPos, clampedYPos, transform.localPosition.z);
     }
+    
 }
